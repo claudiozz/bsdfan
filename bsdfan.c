@@ -9,6 +9,7 @@
 
 #define INVALID_ARGUMENT_ERROR "Arugment not recognised"
 #define MODULE_NOT_FOUND_ERROR "Module acpi_ibm.ko not loaded"
+#define DEFAULT_CONF_PATH "/usr/local/etc/bsdfan.conf"
 
 #define VERSION "0.1"
 
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
 	if(kldfind("acpi_ibm")==-1)
 		error(MODULE_NOT_FOUND_ERROR,NULL);		
 		
-	char *confpath=NULL;
+	char *confpath= DEFAULT_CONF_PATH;
 	char op;
 	bool daemonize = false;
 	
@@ -38,8 +39,8 @@ int main(int argc, char *argv[])
 			case '?':
 				error(INVALID_ARGUMENT_ERROR,NULL);
 				break;
-			default:		
-				confpath="/usr/local/etc/bsdfan.conf";				
+			default:
+				break;		
 		}
 	}
 	
