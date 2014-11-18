@@ -10,6 +10,8 @@
 int idx_cur_level;
 static int mib_set_fan_level[4];
 static int mib_get_temp_level[4];
+static int mib_get_temp_level_alt[5];
+static bool temp_alt = false;
 
 static void levelDown(struct Level *levels);
 static void levelUp(struct Level *levels);
@@ -29,7 +31,13 @@ void setFan(int mode,struct Level *levels)
 	
 		/*get mib for dev.acpi_ibm.0.thermal*/
 		len = 4;
-		sysctlnametomib("dev.acpi_ibm.0.thermal",mib_get_temp_level,&len);
+		if (sysctlnametomib("dev.acpi_ibm.0.thermal",mib_get_temp_level,&len) == -1);
+		{
+			len = 5;
+			/*get mib for hw.acpi.thermal.tz0.temperature*/
+			sysctlnametomib("hw.acpi.thermal.tz0.temperature",mib_get_temp_level_alt,&len);
+			temp_alt=true;
+		}
 
 		/*set lowest available level*/
 		len = 4;
@@ -68,9 +76,19 @@ static void levelDown(struct Level *levels)
 
 int getTemp()
 {
-	int temp[8]={0};
-	size_t len = 8*sizeof(int);
-	sysctl(mib_get_temp_level,4,&temp,&len,NULL,0);
+	if(temp_alt)
+	{
+		int temp[1]={0};
+		size_t len = sizeof(int);
+		sysctl(mib_get_temp_level,5,&temp,&len,NULL,0);
+		
+	}
+	else
+	{
+		int temp[8]={0};
+		size_t len = 8*sizeof(int);
+		sysctl(mib_get_temp_level,4,&temp,&len,NULL,0);
+	}
 	return temp[0];
 	
 }
