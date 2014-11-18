@@ -31,7 +31,7 @@ void setFan(int mode,struct Level *levels)
 	
 		/*get mib for dev.acpi_ibm.0.thermal*/
 		len = 4;
-		if (sysctlnametomib("dev.acpi_ibm.0.thermal",mib_get_temp_level,&len) == -1);
+		if (sysctlnametomib("dev.acpi_ibm.0.thermal",mib_get_temp_level,&len) == -1)
 		{
 			len = 5;
 			/*get mib for hw.acpi.thermal.tz0.temperature*/
@@ -76,19 +76,14 @@ static void levelDown(struct Level *levels)
 
 int getTemp()
 {
-	if(temp_alt)
-	{
-		int temp[1]={0};
-		size_t len = sizeof(int);
-		sysctl(mib_get_temp_level,5,&temp,&len,NULL,0);
-		
-	}
-	else
-	{
-		int temp[8]={0};
+	int temp[8]={0};
 		size_t len = 8*sizeof(int);
+	if(temp_alt)
+		sysctl(mib_get_temp_level,5,&temp,&len,NULL,0);
+
+	else
 		sysctl(mib_get_temp_level,4,&temp,&len,NULL,0);
-	}
+	
 	return temp[0];
 	
 }
