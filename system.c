@@ -79,7 +79,7 @@ int getTemp()
 	int temp[8]={0};
 	size_t len = 8*sizeof(int);
 	if(temp_alt)
-		sysctl(mib_get_temp_level,5,&temp,&len,NULL,0);
+		sysctl(mib_get_temp_level_alt,5,&temp,&len,NULL,0);
 
 	else
 		sysctl(mib_get_temp_level,4,&temp,&len,NULL,0);
