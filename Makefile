@@ -1,5 +1,5 @@
 CC?=clang
-CFLAGS=-c -Wall -O3
+CFLAGS=-c -Wall -O3 -std=c99
 LDFLAGS=
 SOURCES=bsdfan.c common.c parser.c mystring.c system.c
 OBJECTS=$(SOURCES:.c=.o)
