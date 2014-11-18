@@ -1,4 +1,4 @@
-CC=clang
+CC?=clang
 CFLAGS=-c -Wall -O3
 LDFLAGS=
 SOURCES=bsdfan.c common.c parser.c mystring.c system.c
