@@ -6,6 +6,7 @@
 #include "system.h"
 #define INVALID_MODE_ERROR "Invalid fan mode"
 #define PERMISSION_ERROR "Not enough permissions"
+#define KELVIN_TO_CELSIUS(t) ((t-2732+5)/10)
 
 int idx_cur_level;
 static int mib_set_fan_level[4];
@@ -79,8 +80,10 @@ int getTemp()
 	int temp[8]={0};
 	size_t len = 8*sizeof(int);
 	if(temp_alt)
+	{
 		sysctl(mib_get_temp_level_alt,5,&temp,&len,NULL,0);
-
+		return KELVIN_TO_CELSIUS(temp[0]);
+	}
 	else
 		sysctl(mib_get_temp_level,4,&temp,&len,NULL,0);
 	
