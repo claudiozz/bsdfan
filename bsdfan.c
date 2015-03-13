@@ -4,14 +4,22 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/param.h>
-#include<sys/linker.h>
-#include<stdio.h>
+#include <sys/linker.h>
+#include <stdio.h>
+#include <signal.h>
 
 #define INVALID_ARGUMENT_ERROR "Arugment not recognised"
 #define MODULE_NOT_FOUND_ERROR "Module acpi_ibm.ko not loaded"
 #define DEFAULT_CONF_PATH "/usr/local/etc/bsdfan.conf"
 
 #define VERSION "0.1"
+
+static void
+autofan (int sig)
+{
+	setFan(AUTO,NULL);
+	exit(EXIT_FAILURE);
+}
 
 int main(int argc, char *argv[])
 {
@@ -47,6 +55,12 @@ int main(int argc, char *argv[])
 	struct Config *conf;
 
 	conf = readConfig(confpath);
+
+	/* when exit you must reset the fan to AUTO */
+	(void) signal (SIGINT, autofan);
+	(void) signal (SIGTERM, autofan);
+	(void) signal (SIGHUP, autofan);
+	(void) signal (SIGSEGV, autofan);
 
 	setFan(MANUAL,conf->levels);
 	
