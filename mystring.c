@@ -48,18 +48,10 @@ char * getSubstring(char *buff, char c)
 
 bool isSameString(const char *a, const char*b)
 {
-        if(strcmp(a,b)!=0)
-                return false;
+        if(strcmp(a,b)==0)
+                return true;
 
-        while(*a!='\0')
-                if(*a==*b)
-                {
-                        a++;
-                        b++;
-                }
-                else
-                        return false;
-        return true;
+        return false;
 }
 
 bool isEmptyString(const char *s) {
