@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# $FreeBSD$
+
+# PROVIDE: bsdfan
+# REQUIRE: NETWORKING SERVERS DAEMON LOGIN
+# KEYWORD: shutdown nojail
+
+. /etc/rc.subr
+
+name=bsdfan
+desc="Start bsdfan"
+rcvar=bsdfan_enable
+
+load_rc_config $name
+
+command="/usr/local/sbin/${name}"
+start_cmd="${name}_start"
+
+bsdfan_start()
+{
+    ${command} -d
+}
+
+run_rc_command "$1"
