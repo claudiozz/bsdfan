@@ -9,7 +9,7 @@
 #include <signal.h>
 
 #define INVALID_ARGUMENT_ERROR "Arugment not recognised"
-#define MODULE_NOT_FOUND_ERROR "Module acpi_ibm.ko not loaded"
+#define MODULE_LOAD_ERROR "Module acpi_ibm.ko load failed"
 #define DEFAULT_CONF_PATH "/usr/local/etc/bsdfan.conf"
 
 #define VERSION "0.1"
@@ -24,7 +24,8 @@ autofan (int sig)
 int main(int argc, char *argv[])
 {
 	if(kldfind("acpi_ibm")==-1)
-		error(MODULE_NOT_FOUND_ERROR,NULL);		
+		if(kldload("acpi_ibm")==-1)
+			error(MODULE_LOAD_ERROR,NULL);		
 		
 	char *confpath= DEFAULT_CONF_PATH;
 	char op;
