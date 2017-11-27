@@ -1,0 +1,45 @@
+.TH BSDFAN 1 "November 4, 2014" BSDFAN "User Manual"
+.SH NAME
+bsdfan \- a simple utility to manage thinkpads fan on FreeBSD
+.SH SYNOPSIS
+.B bsdfan [-d] [-c
+.I config-file
+.B ]
+.SH DESCRIPTION
+.B bsdfan
+automaticallty regulates the fan speed by the sensor temperature and the user configuration. 
+
+.SH OPTIONS
+.IP -d
+Start bsdfan as a daemon
+.IP "-c config-file"
+Use the alternate system wide
+.I config-file
+instead of
+.IR /usr/local/etc/bsdfan.conf .
+.SH FILES
+.I /usr/local/etc/bsdfan.conf
+.RS
+The system wide configuration file.
+Overridden by the
+.B -c
+option.
+
+Here the user can specifies the levels the fan will be set to.
+They range from 0 (fan idle) to 7 (full speed), it's not necessary to use all levels.
+Levels must be declared in ascending order by level_number and are declared as follows:
+
+level(level_number,level_min_temperature,level_max_temperature)
+
+where level_number is the level number as described above from 0 to 7,
+
+level_min_temperature is the temperature below which the level will be decreased.
+
+level_max_temperature is the maximum temperature beyond which the level will be increased.
+
+level_min_temperature for the first level must be equal to 0.
+levl_max_temperature for the last level must be greater than 150.
+
+An example is provided with the software.
+.SH AUTHOR
+Claudio Zumbo <claudiozumbo at gmail dot com>
