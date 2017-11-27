@@ -19,8 +19,8 @@ static int mib_get_temp_level[4];
 static int mib_get_temp_level_alt[5];
 static bool temp_alt = false;
 
-static void levelDown(struct Level *levels);
-static void levelUp(struct Level *levels);
+static void levelDown(const struct Level *levels);
+static void levelUp(const struct Level *levels);
 
 /*sets fan in either manual or auto mode, in manual sets the lowest defined level and calculates mib_get_fan_level and mib_get_temp_level*/ 
 void
@@ -71,19 +71,22 @@ adjustLevel(int t, const struct Config *conf) /*t for temp*/
 			levelUp(conf->levels);
 }
 
-static void levelUp(struct Level *levels)
+static void
+levelUp(const struct Level *levels)
 {
 	sysctl(mib_set_fan_level,4,NULL,NULL,&levels[idx_cur_level+1].number,sizeof(int));
 	idx_cur_level++;
 }
 
-static void levelDown(struct Level *levels)
+static void
+levelDown(const struct Level *levels)
 {
 	sysctl(mib_set_fan_level,4,NULL,NULL,&levels[idx_cur_level-1].number,sizeof(int));
 	idx_cur_level--;
 }
 
-int getTemp()
+int
+getTemp()
 {
 	int temp[8]={0};
 	size_t len = 8*sizeof(int);
