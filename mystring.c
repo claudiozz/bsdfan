@@ -1,61 +1,60 @@
-#include <stdio.h>
-#include <string.h>
+#include <err.h>
+#include <errno.h>
+#include <limits.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include "common.h"
+#include <string.h>
+#include <sysexits.h>
 
-#define SUBSTRING_ERROR "Character not found: "
+#include "mystring.h"
 
-char * removeLeadingSpaces(char *buff)
-{       
-        char *format = buff;
-        while(*format==' ' || *format=='\t')
-                format++;
-        
-        buff = format;
-        
+#define SUBSTRING_ERROR "Character not found: %c"
+
+const char *
+removeLeadingSpaces(const char *buff)
+{
+        while (*buff == ' ' || *buff == '\t')
+                buff++;
+
         return buff;
 }
 
-char * getSubstring(char *buff, char c)
-{       
-        char *p = buff;
-        int size = sizeof(buff)/sizeof(char);
-        int i =0;
-        
-        while(*buff!=c)
-        {       
-                buff++;
-                i++;
-                if(i>size)
-                        error(SUBSTRING_ERROR,&c);
-        }
-
-        char *substring=malloc(i*sizeof(char));
-
-        if(substring==NULL)
-                error(MALLOC_ERROR,NULL);
-
-        for(int k=0;k<i;k++)
-        {
-                substring[k]=*p;
-                p++;
-        }
-
-        return substring;
-
-}
-
-bool isSameString(const char *a, const char*b)
+int
+getNumber(const char *buff, char c, const char *errString, char **pend)
 {
-        if(strcmp(a,b)==0)
-                return true;
+	char	*end;
+	long	 value;
 
-        return false;
+	errno = 0;
+	value = strtol(buff, &end, 10); /* Must it always be decimal? */
+
+	if (errno)
+		err(EX_CONFIG, errString, buff);
+
+	if (*end != c) {
+		errx(EX_CONFIG, SUBSTRING_ERROR, c);
+        }
+
+	if (value < 0)
+		errx(EX_CONFIG, "Don't be negative (%ld)", value);
+
+	if (value > INT_MAX)
+		errx(EX_CONFIG, "Value %ld is entirely too large", value);
+
+	*pend = end + 1;
+
+        return (int)value;
 }
 
-bool isEmptyString(const char *s) {
-  static const char *emptyline_detector = " \t\n";
+bool
+isSameString(const char *a, const char *b)
+{
+        return strcmp(a, b) == 0;
+}
 
-  return strspn(s, emptyline_detector) == strlen(s);
+bool
+isEmptyString(const char *s) {
+	s += strspn(s, " \t\n");
+	return *s == '\0';
 }
