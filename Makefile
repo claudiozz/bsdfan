@@ -6,4 +6,6 @@ MANDIR=	${LOCALBASE}/man/man
 
 WARNS=	2
 
+MANFILTER=	sed 's|/usr/local|${LOCALBASE}|g'
+
 .include <bsd.prog.mk>
