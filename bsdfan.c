@@ -1,21 +1,24 @@
-#include"common.h"
-#include "parser.h"
-#include"system.h"
-#include <unistd.h>
-#include <stdlib.h>
 #include <sys/param.h>
 #include <sys/linker.h>
-#include <stdio.h>
+
+#include <err.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "common.h"
+#include "parser.h"
+#include "system.h"
 
 #define INVALID_ARGUMENT_ERROR "Arugment not recognised"
 #define MODULE_LOAD_ERROR "Module acpi_ibm.ko load failed"
-#define DEFAULT_CONF_PATH "/usr/local/etc/bsdfan.conf"
+#define DEFAULT_CONF_PATH LOCALBASE "/etc/bsdfan.conf"
 
 #define VERSION "0.1"
 
 static void
-autofan (int sig)
+autofan(int sig __unused)
 {
 	setFan(AUTO,NULL);
 	exit(EXIT_FAILURE);
@@ -23,14 +26,15 @@ autofan (int sig)
 
 int main(int argc, char *argv[])
 {
-	if(kldfind("acpi_ibm")==-1)
-		if(kldload("acpi_ibm")==-1)
-			error(MODULE_LOAD_ERROR,NULL);		
-		
-	char *confpath= DEFAULT_CONF_PATH;
+	const char *confpath= DEFAULT_CONF_PATH;
 	char op;
 	bool daemonize = false;
-	
+	const struct Config *conf;
+
+	if (kldfind("acpi_ibm")== -1)
+		if(kldload("acpi_ibm")==-1)
+			err(EXIT_FAILURE, MODULE_LOAD_ERROR);
+
 	while( (op = getopt(argc, argv, "vdc:")) != -1)
 	{
 		switch(op)
@@ -46,14 +50,12 @@ int main(int argc, char *argv[])
 				confpath=optarg;
 				break;
 			case '?':
-				error(INVALID_ARGUMENT_ERROR,NULL);
+				errx(EXIT_FAILURE, INVALID_ARGUMENT_ERROR);
 				break;
 			default:
-				break;		
+				break;
 		}
 	}
-	
-	struct Config *conf;
 
 	conf = readConfig(confpath);
 
@@ -64,26 +66,26 @@ int main(int argc, char *argv[])
 	(void) signal (SIGSEGV, autofan);
 
 	setFan(MANUAL,conf->levels);
-	
+
 	int oldtemp=0;
 
 	if(daemonize)
 		daemon(0,0);
-		
+
 	while(1)
-	{	
-		int time =2;		
+	{
+		int time =2;
 
 		int cur_temp = getTemp();
 
 		if(oldtemp-cur_temp>2)
-			time =1;		
+			time =1;
 
 		oldtemp = cur_temp;
 
 		adjustLevel(cur_temp,conf);
-	
-		sleep(time);	
+
+		sleep(time);
 	}
 
 }

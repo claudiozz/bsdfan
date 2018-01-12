@@ -1,1 +1,1 @@
-struct Config * readConfig(char *path);
+const struct Config * readConfig(const char *path);

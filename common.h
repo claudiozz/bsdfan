@@ -1,5 +1,4 @@
 #define MALLOC_ERROR "Memory allocation error"
-void error(char *err, char *detail);
 
 struct Level
 {
