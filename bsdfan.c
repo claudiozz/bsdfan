@@ -13,7 +13,7 @@
 
 #define INVALID_ARGUMENT_ERROR "Arugment not recognised"
 #define MODULE_LOAD_ERROR "Module acpi_ibm.ko load failed"
-#define DEFAULT_CONF_PATH LOCALBASE "/etc/bsdfan.conf"
+#define DEFAULT_CONF_PATH LOCALBASE "/usr/local/etc/bsdfan.conf"
 
 #define VERSION "0.1"
 
