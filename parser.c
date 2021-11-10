@@ -103,7 +103,7 @@ Level * getLevel(const char *buff)
 		err(EX_SOFTWARE, MALLOC_ERROR);
 
         level->number = getNumber(p, ',', LEVEL_VAL_ERROR, &p);
-        if (level->number > 7)
+        if (level->number > 8)
                 errx(EX_CONFIG, INVALID_LEVEL_ERROR, level->number);
 
         level->min_max[0] = getNumber(p, ',', LEVEL_VAL_ERROR, &p);
